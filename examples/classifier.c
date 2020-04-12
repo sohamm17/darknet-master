@@ -725,33 +725,64 @@ void folder_walk_classify(int argc, char **argv)
 
     pid_t tid;
     tid = gettid();
-    configureIPC();
-    //profilingSetup();
-    struct rt_task temp_param;
-    CALL(init_litmus());
-    init_rt_props(exec_cost, exec_cost_hi, period, prio, r_lo, r_star, tid);
-    CALL(be_migrate_to_domain(PARTITION));
-    CALL(task_mode(LITMUS_RT_TASK));
-    CALL(wait_for_ts_release());
-    //--SS-- setup rt_task params for this task
-    
-    // ------------------------End of LITMUS Setup --SS--
-    for(i = 0; i < tot_images; i++) {
-      //profilerStartTime();
-      setStartTime();
-      folder_walk_classify_helper(net, input[i], indexes, names, top);
-      // For memory access modelling stuff
-      //endIteration(0, 0);
-      get_rt_task_param(tid, &temp_param);
-      iterations[i] = temp_param.exec_cost_crit[0];
-      sched[i] = temp_param.exec_cost_crit[1];
-      printf("%d: Cur:%d, job:%u, %d, %d, Per: %llu\n", params.priority, i+1,
-      litmus_cp->job_index, iterations[i], sched[i], ns2ms(params.period));
+    //configureIPC();
+
+    /**** allow the following lines for Profiling ****/
+    profilingSetup();
+    /**** End of Profiling phase lines ****/
+
+    /**** allow the following lines for Execution phase ****/
+
+    /*
+      struct rt_task temp_param;
+      CALL(init_litmus());
       init_rt_props(exec_cost, exec_cost_hi, period, prio, r_lo, r_star, tid);
-      if(!sleep_next_period())
-        ;
+      CALL(be_migrate_to_domain(PARTITION));
+      CALL(task_mode(LITMUS_RT_TASK));
+      CALL(wait_for_ts_release());
+    */
+
+    /**** End of Execution phase lines ****/
+
+    //--SS-- setup rt_task params for this task
+
+    // ------------------------End of LITMUS Setup --SS--
+
+    for(i = 0; i < tot_images; i++) {
+        /**** allow the following lines for Profiling ****/
+        profilerStartTime();
+        /**** End of Profiling phase lines ****/
+
+
+        /**** allow the following lines for Execution phase ****/
+        //setStartTime();
+        /**** End of Execution phase lines ****/
+
+
+        folder_walk_classify_helper(net, input[i], indexes, names, top);
+        // For memory access modelling stuff
+        //endIteration(0, 0);
+        
+        /**** allow the following lines for Execution phase ****/
+        
+        /*
+        get_rt_task_param(tid, &temp_param);
+        iterations[i] = temp_param.exec_cost_crit[0];
+        sched[i] = temp_param.exec_cost_crit[1];
+        printf("%d: Cur:%d, job:%u, %d, %d, Per: %llu\n", params.priority, i+1,
+        litmus_cp->job_index, iterations[i], sched[i], ns2ms(params.period));
+        init_rt_props(exec_cost, exec_cost_hi, period, prio, r_lo, r_star, tid);
+        if(!sleep_next_period())
+          ;
+        */
+        /**** End of Execution phase lines ****/
     }
-    CALL(task_mode(BACKGROUND_TASK));
+    
+    /**** allow the following lines for Execution phase ****/
+    
+    //CALL(task_mode(BACKGROUND_TASK));
+    
+    /**** End of Execution phase lines ****/
     int final_no_img = i, tot_hi_mode = 0;
 
     //FILE* result_fp = fopen("result.txt");
@@ -777,8 +808,18 @@ void folder_walk_classify(int argc, char **argv)
     
     //printf("Prio,%d,Hi,%d\n", params.priority, tot_hi_mode);
     fclose(fp_time_log);
+    
+    /**** allow the following lines for Execution phase ****/
+    
     //endIPC();
-    //endProfiling();
+    
+    /**** End of Execution phase lines ****/
+    
+    /**** allow the following lines for Profiling ****/
+    
+    endProfiling();
+    
+    /**** End of Profiling phase lines ****/
 }
 
 void predict_classifier(char *datacfg, char *cfgfile, char *weightfile, char *filename, int top)
