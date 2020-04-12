@@ -33,7 +33,7 @@
 #include "data.h"
 
 //-- For writeTime - For PAStime library
-#include "/home/common_shared/PAStime/pastime/lib.h"
+#include "../pastime/lib.h"
 #include <litmus.h>
 
 // -- For PMUTools APIs
